@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatzi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Noto+Sans+JP:wght@300;900&family=Cinzel:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #d1d1d1;
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Capa de grano analógico */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise_600x600.png');
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Pantalla de Intro */
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000000;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+        }
+
+        .intro-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 90%;
+        }
+
+        .intro-image {
+            max-width: 300px;
+            max-height: 45vh;
+            border: 1px solid #111;
+            box-shadow: 0 0 40px rgba(139, 0, 0, 0.1);
+            object-fit: contain;
+        }
+
+        .satanic-btn {
+            font-family: 'UnifrakturMaguntia', serif;
+            font-size: 2.2rem;
+            color: #660000;
+            background: transparent;
+            border: 1px solid #330000;
+            padding: 5px 60px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            text-transform: lowercase;
+            outline: none;
+        }
+
+        .satanic-btn:hover {
+            color: #ff0000;
+            border-color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+            letter-spacing: 6px;
+        }
+
+        /* Sitio Principal */
+        #main-site {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #0a0000 0%, #000000 100%);
+        }
+
+        /* Contenedor del Borde Animado */
+        .card-wrapper {
+            position: relative;
+            height: 85vh;
+            aspect-ratio: 9 / 16;
+            padding: 3px; 
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+        }
+
+        .card-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 250%;
+            height: 250%;
+            background: conic-gradient(from 0deg, transparent 20%, #000 40%, #ff0000 50%, #000 60%, transparent 80%);
+            animation: rotateWave 4s linear infinite;
+        }
+
+        @keyframes rotateWave {
+            to { transform: rotate(360deg); }
+        }
+
+        .content-rect {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #030303;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .border-img {
+            position: absolute;
+            width: 190px;
+            height: auto;
+            filter: grayscale(0.2) contrast(1.1) brightness(0.8);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .top-edge { top: 0; right: 0; }
+        .bottom-edge { bottom: 0; left: 0; }
+
+        /* Contenedor de Logo e Iconos */
+        .logo-center-box {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 30;
+        }
+
+        .main-logo-img {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4));
+        }
+
+        /* Icono sobre la T */
+        .top-icon-t {
+            position: absolute;
+            width: 45px;
+            top: -45px;
+            left: 50%;
+            /* Ajustado más a la derecha para cuadrar con la T del logo */
+            transform: translateX(calc(-50% + 12px)) translateY(0);
+            animation: floatIcon 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 5px #ff0000);
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateX(calc(-50% + 12px)) translateY(0); }
+            50% { transform: translateX(calc(-50% + 12px)) translateY(-5px); }
+        }
+
+        /* Cruz Invertida con Glow debajo del logo */
+        .inverted-cross {
+            position: relative;
+            width: 30px;
+            height: 50px;
+            margin-top: 10px;
+            /* Desplazada un poco más que el icono superior para encuadrar con la T */
+            transform: translateX(14px);
+            filter: drop-shadow(0 0 12px #ff0000);
+            opacity: 1;
+        }
+
+        .center-quote {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            color: #ffffff;
+            text-transform: uppercase;
+            z-index: 20;
+            opacity: 0.9;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2), 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Reproductor de Música */
+        .music-player {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 280px;
+            background: rgba(5, 0, 0, 0.9);
+            border: 1px solid #4a0000;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 150;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.2);
+            border-radius: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 1.5s;
+        }
+
+        #main-site.active + .music-player {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .album-art {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #8b0000;
+            object-fit: cover;
+        }
+
+        .track-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .track-name {
+            font-size: 0.65rem;
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .artist-name {
+            font-size: 0.55rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+            width: 30px;
+        }
+
+        .bar {
+            flex: 1;
+            width: 3px;
+            background: #ff0000;
+            height: 3px;
+            transition: height 0.05s ease;
+        }
+
+        .active {
+            display: flex !important;
+            opacity: 1 !important;
+        }
+
+        @media (max-width: 600px) {
+            .card-wrapper { height: 75vh; width: 85vw; }
+            .music-player { width: calc(100% - 50px); bottom: 15px; left: 15px; }
+            .border-img { width: 140px; }
+            .main-logo-img { max-width: 220px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+
+    <!-- PANTALLA DE INTRODUCCIÓN -->
+    <div id="intro-screen">
+        <div class="intro-container">
+            <img src="https://i.pinimg.com/1200x/6e/23/52/6e23527877891dc6ed017f377b98491c.jpg" 
+                 alt="[Imagen de Introducción]" class="intro-image">
+            <button class="satanic-btn" onclick="enterSite()">entrar</button>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="main-site">
+        <div class="card-wrapper">
+            <div class="content-rect">
+                <!-- Imagen Superior Derecha -->
+                <img src="https://xatimg.com/image/fK9igeqhrVLH.png" 
+                     alt="[Imagen de borde superior]" class="border-img top-edge">
+
+                <!-- Logo Central con Aditamentos -->
+                <div class="logo-center-box">
+                    <!-- Icono sobre la T -->
+                    <img src="https://xatimg.com/image/Z8IrpY0fYS7z.png" alt="[Icono superior]" class="top-icon-t">
+                    
+                    <!-- Imagen Logo Yatzi -->
+                    <img src="https://xatimg.com/image/aQLaEMiCSuPx.png" alt="[Logo Yatzi]" class="main-logo-img">
+                    
+                    <!-- Cruz Invertida con Glow debajo del logo -->
+                    <div class="inverted-cross">
+                        <svg viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 48V0M4 36H20" stroke="#ff0000" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <!-- Frase God is a Weapon -->
+                    <p class="center-quote">God is a Weapon</p>
+                </div>
+
+                <!-- Imagen Inferior Izquierda -->
+                <img src="https://xatimg.com/image/Af1B5aHA1RLK.png" 
+                     alt="[Imagen de borde inferior]" class="border-img bottom-edge">
+            </div>
+        </div>
+    </main>
+
+    <!-- REPRODUCTOR DE MÚSICA -->
+    <div class="music-player" id="player-ui">
+        <img src="https://xatimg.com/image/EGEDHtqmi0Hw.jpg" alt="[Carátula de la canción]" class="album-art">
+        <div class="track-info">
+            <div class="track-name">Watch The World Burn</div>
+            <div class="artist-name">Falling In Reverse</div>
+        </div>
+        <div class="visualizer" id="visualizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <audio id="bg-music" loop crossorigin="anonymous">
+            <source src="musica.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        let audioCtx;
+        let analyser;
+        let dataArray;
+        let bars;
+
+        function initVisualizer(audioElement) {
+            // Inicializar AudioContext tras interacción
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaElementSource(audioElement);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64; // Tamaño pequeño para pocas barras
+                
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                bars = document.querySelectorAll('.bar');
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                analyser.getByteFrequencyData(dataArray);
+
+                for (let i = 0; i < bars.length; i++) {
+                    // Tomamos una muestra de frecuencias bajas/medias
+                    const value = dataArray[i * 2]; 
+                    const percent = value / 255;
+                    const height = Math.max(3, percent * 20);
+                    bars[i].style.height = `${height}px`;
+                }
+            }
+            animate();
+        }
+
+        function enterSite() {
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-site');
+            const music = document.getElementById('bg-music');
+            const playerUi = document.getElementById('player-ui');
+
+            // Iniciar visualizador y música
+            initVisualizer(music);
+            music.play().catch(e => console.log("Interacción requerida para audio."));
+
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.visibility = 'hidden';
+                main.classList.add('active');
+                playerUi.style.opacity = '1';
+                playerUi.style.transform = 'translateY(0)';
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
