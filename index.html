@@ -165,15 +165,15 @@
             width: 45px;
             top: -45px;
             left: 50%;
-            /* Ajustado más a la derecha para cuadrar con la T del logo */
-            transform: translateX(calc(-50% + 12px)) translateY(0);
+            /* Alineado con la T del logo */
+            transform: translateX(calc(-50% + 15px)) translateY(0);
             animation: floatIcon 3s ease-in-out infinite;
             filter: drop-shadow(0 0 5px #ff0000);
         }
 
         @keyframes floatIcon {
-            0%, 100% { transform: translateX(calc(-50% + 12px)) translateY(0); }
-            50% { transform: translateX(calc(-50% + 12px)) translateY(-5px); }
+            0%, 100% { transform: translateX(calc(-50% + 15px)) translateY(0); }
+            50% { transform: translateX(calc(-50% + 15px)) translateY(-5px); }
         }
 
         /* Cruz Invertida con Glow debajo del logo */
@@ -182,8 +182,8 @@
             width: 30px;
             height: 50px;
             margin-top: 10px;
-            /* Desplazada un poco más que el icono superior para encuadrar con la T */
-            transform: translateX(14px);
+            /* Alineada con el eje de la T */
+            transform: translateX(18px);
             filter: drop-shadow(0 0 12px #ff0000);
             opacity: 1;
         }
@@ -205,15 +205,15 @@
             position: fixed;
             bottom: 25px;
             left: 25px;
-            width: 280px;
-            background: rgba(5, 0, 0, 0.9);
+            width: 300px;
+            background: rgba(5, 0, 0, 0.95);
             border: 1px solid #4a0000;
             padding: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
             z-index: 150;
-            box-shadow: 0 0 20px rgba(139, 0, 0, 0.2);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
             border-radius: 2px;
             opacity: 0;
             transform: translateY(20px);
@@ -230,28 +230,36 @@
             height: 50px;
             border: 1px solid #8b0000;
             object-fit: cover;
+            flex-shrink: 0;
         }
 
-        .track-info {
+        /* Contenedor de info con scroll */
+        .track-info-container {
             flex: 1;
             overflow: hidden;
+            position: relative;
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+
+        .track-scroll {
+            white-space: nowrap;
+            display: inline-block;
+            animation: marquee 10s linear infinite;
+            padding-left: 20px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .track-name {
             font-size: 0.65rem;
             font-family: 'Orbitron', sans-serif;
             color: #ff0000;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-
-        .artist-name {
-            font-size: 0.55rem;
-            color: #666;
-            text-transform: uppercase;
+            margin-right: 60px; /* Espacio para el bucle */
         }
 
         .visualizer {
@@ -260,6 +268,7 @@
             gap: 2px;
             height: 20px;
             width: 30px;
+            flex-shrink: 0;
         }
 
         .bar {
@@ -333,9 +342,12 @@
     <!-- REPRODUCTOR DE MÚSICA -->
     <div class="music-player" id="player-ui">
         <img src="https://xatimg.com/image/EGEDHtqmi0Hw.jpg" alt="[Carátula de la canción]" class="album-art">
-        <div class="track-info">
-            <div class="track-name">Watch The World Burn</div>
-            <div class="artist-name">Falling In Reverse</div>
+        <div class="track-info-container">
+            <div class="track-scroll" id="scrolling-text">
+                <span class="track-name">Falling In Reverse - Watch The World Burn</span>
+                <!-- Repetimos el texto para el efecto de loop infinito -->
+                <span class="track-name">Falling In Reverse - Watch The World Burn</span>
+            </div>
         </div>
         <div class="visualizer" id="visualizer">
             <div class="bar"></div>
@@ -356,12 +368,11 @@
         let bars;
 
         function initVisualizer(audioElement) {
-            // Inicializar AudioContext tras interacción
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioCtx.createMediaElementSource(audioElement);
                 analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 64; // Tamaño pequeño para pocas barras
+                analyser.fftSize = 64;
                 
                 source.connect(analyser);
                 analyser.connect(audioCtx.destination);
@@ -376,7 +387,6 @@
                 analyser.getByteFrequencyData(dataArray);
 
                 for (let i = 0; i < bars.length; i++) {
-                    // Tomamos una muestra de frecuencias bajas/medias
                     const value = dataArray[i * 2]; 
                     const percent = value / 255;
                     const height = Math.max(3, percent * 20);
@@ -392,9 +402,8 @@
             const music = document.getElementById('bg-music');
             const playerUi = document.getElementById('player-ui');
 
-            // Iniciar visualizador y música
             initVisualizer(music);
-            music.play().catch(e => console.log("Interacción requerida para audio."));
+            music.play().catch(e => console.log("Audio play blocked."));
 
             intro.style.opacity = '0';
             setTimeout(() => {
