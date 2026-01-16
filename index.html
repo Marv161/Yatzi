@@ -17,6 +17,8 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            /* Evitar selección de texto */
+            user-select: none;
         }
 
         /* Capa de grano analógico */
@@ -56,6 +58,8 @@
             border: 1px solid #111;
             box-shadow: 0 0 40px rgba(139, 0, 0, 0.1);
             object-fit: contain;
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         .satanic-btn {
@@ -139,6 +143,7 @@
             filter: grayscale(0.2) contrast(1.1) brightness(0.8);
             z-index: 5;
             pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         .top-edge { top: 0; right: 0; }
@@ -157,6 +162,8 @@
             max-width: 280px;
             height: auto;
             filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4));
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         /* Icono sobre la T */
@@ -169,6 +176,8 @@
             transform: translateX(calc(-50% + 15px)) translateY(0);
             animation: floatIcon 3s ease-in-out infinite;
             filter: drop-shadow(0 0 5px #ff0000);
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         @keyframes floatIcon {
@@ -186,6 +195,7 @@
             transform: translateX(18px);
             filter: drop-shadow(0 0 12px #ff0000);
             opacity: 1;
+            pointer-events: none;
         }
 
         .center-quote {
@@ -231,6 +241,8 @@
             border: 1px solid #8b0000;
             object-fit: cover;
             flex-shrink: 0;
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         /* Contenedor de info con scroll */
@@ -292,7 +304,7 @@
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div class="noise"></div>
 
@@ -362,6 +374,9 @@
     </div>
 
     <script>
+        // Desactivar clic derecho globalmente
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         let audioCtx;
         let analyser;
         let dataArray;
