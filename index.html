@@ -94,6 +94,44 @@
             align-items: center;
             justify-content: center;
             background: radial-gradient(circle, #0a0000 0%, #000000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Pentagramas flotantes */
+        .pentagram-bg {
+            position: absolute;
+            width: 400px;
+            height: auto;
+            opacity: 0.15;
+            filter: drop-shadow(0 0 20px #ff0000);
+            z-index: 1;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        .pent-1 {
+            top: 10%;
+            left: -5%;
+            animation: floatSpace1 25s linear infinite;
+        }
+
+        .pent-2 {
+            bottom: 5%;
+            right: -5%;
+            animation: floatSpace2 35s linear infinite;
+        }
+
+        @keyframes floatSpace1 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(50px, 100px) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @keyframes floatSpace2 {
+            0% { transform: translate(0, 0) rotate(360deg); }
+            50% { transform: translate(-80px, -120px) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
 
         /* Contenedor del Borde Animado */
@@ -108,6 +146,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 0 100px rgba(0,0,0,1);
+            z-index: 10;
         }
 
         .card-wrapper::before {
@@ -301,6 +340,7 @@
             .music-player { width: calc(100% - 50px); bottom: 15px; left: 15px; }
             .border-img { width: 140px; }
             .main-logo-img { max-width: 220px; }
+            .pentagram-bg { width: 250px; }
         }
     </style>
 </head>
@@ -319,6 +359,10 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main id="main-site">
+        <!-- Pentagramas en el espacio -->
+        <img src="https://xatimg.com/image/fv92b2c7YR7W.png" alt="[Pentagrama 1]" class="pentagram-bg pent-1">
+        <img src="https://xatimg.com/image/MHJYT5aMUBaI.png" alt="[Pentagrama 2]" class="pentagram-bg pent-2">
+
         <div class="card-wrapper">
             <div class="content-rect">
                 <!-- Imagen Superior Derecha -->
